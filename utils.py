@@ -2,7 +2,7 @@ import base64
 import json
 import os
 import unittest.mock as mock
-from tempfile import NamedTemporaryFile, TemporaryDirectory, gettempdir
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from time import sleep
 
 import boto3
