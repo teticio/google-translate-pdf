@@ -130,6 +130,9 @@ def translate_pdf(pdf: bytearray) -> bytearray:
         while os.path.exists(output_filename + ".crdownload"):
             sleep(0.1)
 
+        for entry in driver.get_log("browser"):
+            logger.debug(entry)
+
         logger.debug("Closing driver")
         driver.close()
 

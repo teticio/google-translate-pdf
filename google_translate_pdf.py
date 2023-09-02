@@ -1,10 +1,16 @@
 import argparse
 import io
+import logging
 from typing import List
 
 from PyPDF2 import PdfReader, PdfWriter
 
 from utils import translate_pdf, translate_pdf_proxy
+
+handler = logging.StreamHandler()
+logger = logging.getLogger()
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 
 
 class GoogleTranslatePDF:
