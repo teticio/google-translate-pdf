@@ -2,12 +2,14 @@ import base64
 import json
 import logging
 import os
+import shutil
 import unittest.mock as mock
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from time import sleep
 from typing import Any, Optional
 
 import boto3
+import requests
 
 with mock.patch("multiprocessing.Lock", return_value=object()):
     import undetected_chromedriver as uc
@@ -20,7 +22,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 TIMEOUT: int = 1000000
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 def translate_pdf(pdf: bytearray) -> bytearray:
@@ -52,14 +54,14 @@ def translate_pdf(pdf: bytearray) -> bytearray:
         options.add_argument(f"--disk-cache-dir={tmp_dir}/cache-dir")
         options.add_argument(f"--user-data-dir={tmp_dir}/user-data")
         options.add_argument(f"--data-path={tmp_dir}/data-path")
-        options.add_argument(
-            "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
-        )
         options.add_experimental_option(
             "prefs", {"download.default_directory": tmp_dir}
         )
         logger.debug("Opening driver")
         driver: uc.Chrome = uc.Chrome(options=options)
+
+        user_agent = driver.execute_script("return navigator.userAgent")
+        logger.debug(user_agent)
 
         logger.debug("Navigating to Google Translate")
         driver.get("https://translate.google.com/?sl=auto&tl=en&op=docs")
@@ -134,27 +136,51 @@ def translate_pdf(pdf: bytearray) -> bytearray:
         with open(output_filename, "rb") as file:
             translated_pdf: bytearray = file.read()
 
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
     return translated_pdf
 
 
-def translate_pdf_proxy(pdf: bytearray) -> bytearray:
-    """
-    Translates a PDF file using Google Translate via a proxy.
+if not os.environ.get("LOCAL_LAMBDA", False):
 
-    Args:
-        pdf (bytearray): The PDF file to be translated.
+    def translate_pdf_proxy(pdf: bytearray) -> bytearray:
+        """
+        Translates a PDF file using Google Translate via a proxy.
 
-    Returns:
-        bytearray: The translated PDF file.
-    """
-    logger.setLevel(logging.DEBUG)
-    lambda_client: boto3.client = boto3.client("lambda")
-    response: dict[str, Any] = lambda_client.invoke(
-        FunctionName="google-translate-pdf",
-        InvocationType="RequestResponse",
-        Payload=bytes(
-            json.dumps({"pdf": base64.b64encode(pdf).decode("utf-8")}), encoding="utf-8"
-        ),
-    )
-    response = json.loads(response["Payload"].read())
-    return base64.b64decode(response["translated_pdf"])
+        Args:
+            pdf (bytearray): The PDF file to be translated.
+
+        Returns:
+            bytearray: The translated PDF file.
+        """
+        lambda_client: boto3.client = boto3.client("lambda")
+        response: dict[str, Any] = lambda_client.invoke(
+            FunctionName="google-translate-pdf",
+            InvocationType="RequestResponse",
+            Payload=bytes(
+                json.dumps({"pdf": base64.b64encode(pdf).decode("utf-8")}),
+                encoding="utf-8",
+            ),
+        )
+        response = json.loads(response["Payload"].read())
+        return base64.b64decode(response["translated_pdf"])
+
+else:
+
+    def translate_pdf_proxy(pdf: bytearray) -> bytearray:
+        """
+        Translates a PDF file using Google Translate via a proxy.
+
+        docker run --rm --cpus 1 -m 1024m -p 9000:8080 <account>.dkr.<region>.amazonaws.com/google-translate-pdf:<tag>
+
+        Args:
+            pdf (bytearray): The PDF file to be translated.
+
+        Returns:
+            bytearray: The translated PDF file.
+        """
+        url = "http://localhost:9000/2015-03-31/functions/function/invocations"
+        payload = {"pdf": base64.b64encode(pdf).decode("utf-8")}
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(url, data=json.dumps(payload), headers=headers).json()
+        return base64.b64decode(response["translated_pdf"])
