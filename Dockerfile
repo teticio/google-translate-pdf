@@ -1,9 +1,11 @@
 # Use an AWS Lambda Python runtime as a parent image
 FROM public.ecr.aws/lambda/python:3.9
 
+RUN yum update -y && \
+    yum install -y curl jq unzip wget
+
 # Install Chrome from RPM
 # RUN yum update -y && \
-#     yum install -y curl jq unzip wget && \
 #     wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
 #     yum install -y ./google-chrome-stable_current_x86_64.rpm && \
 #     rm google-chrome-stable_current_x86_64.rpm
