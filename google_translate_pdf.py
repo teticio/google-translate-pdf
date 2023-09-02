@@ -8,14 +8,45 @@ from utils import translate_pdf, translate_pdf_proxy
 
 
 class GoogleTranslatePDF:
+    """
+    Class to handle splitting, translating, and joining PDFs.
+    """
+
     def __init__(self, pdf: bytearray) -> None:
+        """
+        Initialize the GoogleTranslatePDF object.
+
+        Args:
+            pdf (bytearray): The PDF file to be translated.
+        """
         self.pdfs = self.split_pdf(pdf=pdf, max_size=10 * 1024 * 1024)
 
     @staticmethod
     def split_pdf(pdf: bytearray, max_size: int) -> List[bytearray]:
+        """
+        Split a PDF into multiple smaller PDFs.
+
+        Args:
+            pdf (bytearray): The PDF file to be split.
+            max_size (int): The maximum size of each split PDF.
+
+        Returns:
+            List[bytearray]: A list of split PDFs.
+        """
+
         def split_pdf_by_pages(
             pdf_reader: PdfReader, max_pages: int
         ) -> List[bytearray]:
+            """
+            Split a PDF into multiple smaller PDFs by pages.
+
+            Args:
+                pdf_reader (PdfReader): The PDF reader object.
+                max_pages (int): The maximum number of pages in each split PDF.
+
+            Returns:
+                List[bytearray]: A list of split PDFs.
+            """
             pdfs = []
 
             for start_page in range(0, len(pdf_reader.pages), max_pages):
@@ -55,6 +86,15 @@ class GoogleTranslatePDF:
 
     @staticmethod
     def join_pdfs(pdfs: List[bytearray]) -> bytearray:
+        """
+        Join multiple PDFs into a single PDF.
+
+        Args:
+            pdfs (List[bytearray]): A list of PDFs to be joined.
+
+        Returns:
+            bytearray: The joined PDF.
+        """
         pdf_writer = PdfWriter()
 
         for pdf in pdfs:
@@ -68,6 +108,15 @@ class GoogleTranslatePDF:
         return pdf_stream.getvalue()
 
     def translate(self, proxy: bool = False) -> bytearray:
+        """
+        Translate a PDF file.
+
+        Args:
+            proxy (bool, optional): Whether to use a proxy for translation. Defaults to False.
+
+        Returns:
+            bytearray: The translated PDF.
+        """
         if proxy:
             pdfs = [translate_pdf_proxy(pdf=pdf) for pdf in self.pdfs]
         else:
@@ -76,6 +125,9 @@ class GoogleTranslatePDF:
 
 
 if __name__ == "__main__":
+    """
+    Main function to handle command line arguments and execute the translation.
+    """
     parser = argparse.ArgumentParser(
         description="Split PDF file into multiple PDF files."
     )

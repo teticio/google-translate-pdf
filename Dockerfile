@@ -1,9 +1,9 @@
 # Use an AWS Lambda Python runtime as a parent image
 FROM public.ecr.aws/lambda/python:3.9
 
-# Install necessary packages
+# Install necessary packages (detemined with check_deps.sh script)
 RUN yum update -y && \
-    yum install -y wget unzip curl jq xorg-x11-server-Xvfb libXi libgbm libGConf2 nss libXScrnSaver libXtst alsa-lib liberation-mono-fonts libappindicator-gtk3 atk gtk3 u2f-hidraw-policy vulkan mesa-dri-drivers xdg-utils redhat-lsb-core && \
+    yum install -y alsa-lib atk at-spi2-atk at-spi2-core bash ca-certificates cairo chkconfig curl expat glib2 glibc gtk3 jq libcurl libdrm libgcc libX11 libxcb libXcomposite libXdamage libXext libXfixes libxkbcommon libXrandr mesa-libgbm nspr nss nss-util pango unzip vulkan wget xdg-utils && \
     yum clean all
 
 # Install Chrome and Chromedriver
@@ -28,7 +28,7 @@ RUN pip install boto3 selenium undetected-chromedriver
 COPY lambda.py /var/task
 COPY utils.py /var/task
 
-ENV FONTCONFIG_PATH=/opt/etc/fonts
+ENV FONTCONFIG_PATH=/tmp
 
 # Set the CMD to the handler
 CMD ["lambda.lambda_handler"]
