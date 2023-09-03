@@ -15,7 +15,7 @@ RUN LATEST_CHROME_RELEASE=$(curl -s https://googlechromelabs.github.io/chrome-fo
     wget -N "$LATEST_CHROMEDRIVER_URL" && \
     unzip chromedriver-linux64.zip -d /opt/bin/ && \
     chmod +x /opt/bin/chromedriver-linux64/chromedriver && \
-    ln -s /optbin/chromedriver-linux64/chromedriver /opt/bin/chromedriver && \
+    ln -s /opt/bin/chromedriver-linux64/chromedriver /opt/bin/chromedriver && \
     rm chromedriver-linux64.zip
 
 # Install Selenium
