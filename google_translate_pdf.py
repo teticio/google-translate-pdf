@@ -145,6 +145,7 @@ if __name__ == "__main__":
         "--split_size",
         type=float,
         help="split PDF into multiple PDFs of this size (in MB)",
+        default=10
     )
     args = parser.parse_args()
 
