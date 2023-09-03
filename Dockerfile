@@ -3,7 +3,7 @@ FROM public.ecr.aws/lambda/python:3.9
 
 # Install Chrome
 RUN yum update -y && \
-    yum install -y curl jq unzip wget && \
+    yum install -y curl gcc jq unzip wget && \
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
     yum install -y ./google-chrome-stable_current_x86_64.rpm && \
     rm google-chrome-stable_current_x86_64.rpm && \
@@ -24,6 +24,9 @@ RUN pip install boto3 selenium undetected-chromedriver
 # Add application code
 COPY lambda.py /var/task
 COPY utils.py /var/task
+
+COPY wrap_chrome_binary /opt/bin/wrap_chrome_binary
+RUN /opt/bin/wrap_chrome_binary
 
 # Set the CMD to the handler
 CMD ["lambda.lambda_handler"]

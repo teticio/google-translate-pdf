@@ -174,7 +174,9 @@ else:
         """
         Translates a PDF file using Google Translate via a proxy.
 
-        docker run --rm --cpus 1 -m 1024m -p 9000:8080 <account>.dkr.<region>.amazonaws.com/google-translate-pdf:<tag>
+        docker run --rm --cpus 1 -m 1024m -p 9000:8080 \
+            --read-only --tmpfs /tmp:rw,exec,size=512m \
+            <account>.dkr.<region>.amazonaws.com/google-translate-pdf:<tag>
 
         Args:
             pdf (bytearray): The PDF file to be translated.
