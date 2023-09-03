@@ -6,7 +6,7 @@ module "google_download_pdf" {
   package_type   = "Image"
   architectures  = ["x86_64"]
   timeout        = 180
-  memory_size    = 1024
+  memory_size    = 10240
   hash_extra     = "google_translate_pdf"
 }
 

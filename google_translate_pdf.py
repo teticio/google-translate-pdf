@@ -18,14 +18,15 @@ class GoogleTranslatePDF:
     Class to handle splitting, translating, and joining PDFs.
     """
 
-    def __init__(self, pdf: bytearray) -> None:
+    def __init__(self, pdf: bytearray, split_size: float = 10) -> None:
         """
         Initialize the GoogleTranslatePDF object.
 
         Args:
             pdf (bytearray): The PDF file to be translated.
+            split_size (int, optional): The maximum size of each split PDF (in MB). Defaults to 10.
         """
-        self.pdfs = self.split_pdf(pdf=pdf, max_size=10 * 1024 * 1024)
+        self.pdfs = self.split_pdf(pdf=pdf, max_size=int(split_size * 1024 * 1024))
 
     @staticmethod
     def split_pdf(pdf: bytearray, max_size: int) -> List[bytearray]:
@@ -140,10 +141,17 @@ if __name__ == "__main__":
     parser.add_argument("--input_pdf", type=str, help="input PDF file")
     parser.add_argument("--output_pdf", type=str, help="output PDF file")
     parser.add_argument("--proxy", action="store_true", help="use proxy")
+    parser.add_argument(
+        "--split_size",
+        type=float,
+        help="split PDF into multiple PDFs of this size (in MB)",
+    )
     args = parser.parse_args()
 
     with open(args.input_pdf, "rb") as file:
         pdf = file.read()
-    pdf = GoogleTranslatePDF(pdf=pdf).translate(proxy=args.proxy)
+    pdf = GoogleTranslatePDF(pdf=pdf, split_size=args.split_size).translate(
+        proxy=args.proxy
+    )
     with open(args.output_pdf, "wb") as file:
         file.write(pdf)
