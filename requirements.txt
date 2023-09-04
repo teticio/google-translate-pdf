@@ -1,0 +1,5 @@
+boto3
+debugpy
+PyPDF2
+selenium
+undetected-chromedriver

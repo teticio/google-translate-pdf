@@ -105,6 +105,9 @@ class GoogleTranslatePDF:
         pdf_writer = PdfWriter()
 
         for pdf in pdfs:
+            if len(pdf) == 0:
+                logger.error("Empty PDF")
+                continue
             pdf_reader = PdfReader(io.BytesIO(pdf))
             for page in range(len(pdf_reader.pages)):
                 pdf_writer.add_page(pdf_reader.pages[page])
@@ -145,7 +148,7 @@ if __name__ == "__main__":
         "--split_size",
         type=float,
         help="split PDF into multiple PDFs of this size (in MB)",
-        default=10
+        default=10,
     )
     args = parser.parse_args()
 

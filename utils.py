@@ -40,28 +40,19 @@ def translate_pdf(pdf: bytearray) -> bytearray:
 
         options: uc.ChromeOptions = uc.ChromeOptions()
         options.add_argument("--headless")
-        options.add_argument("--no-sandbox")
         options.add_argument("--disable-gpu")
         options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--window-size=1280x1696")
         options.add_argument("--hide-scrollbars")
         options.add_argument("--single-process")
         options.add_argument("--ignore-certificate-errors")
-        options.add_argument("--enable-logger")
-        options.add_argument("--log-level=0")
-        options.add_argument("--v=0")
         options.add_argument(f"--homedir={tmp_dir}")
         options.add_argument(f"--disk-cache-dir={tmp_dir}/cache-dir")
-        options.add_argument(f"--user-data-dir={tmp_dir}/user-data")
         options.add_argument(f"--data-path={tmp_dir}/data-path")
         options.add_experimental_option(
             "prefs", {"download.default_directory": tmp_dir}
         )
         logger.debug("Opening driver")
         driver: uc.Chrome = uc.Chrome(options=options)
-
-        user_agent = driver.execute_script("return navigator.userAgent")
-        logger.debug(user_agent)
 
         logger.debug("Navigating to Google Translate")
         driver.get("https://translate.google.com/?sl=auto&tl=en&op=docs")

@@ -3,7 +3,7 @@ FROM public.ecr.aws/lambda/python:3.9
 
 # Install Chrome
 RUN yum update -y && \
-    yum install -y curl gcc jq unzip wget && \
+    yum install -y curl gcc jq tar unzip wget && \
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
     yum install -y ./google-chrome-stable_current_x86_64.rpm && \
     rm google-chrome-stable_current_x86_64.rpm && \
@@ -19,12 +19,16 @@ RUN LATEST_CHROME_RELEASE=$(curl -s https://googlechromelabs.github.io/chrome-fo
     rm chromedriver-linux64.zip
 
 # Install Selenium
-RUN pip install boto3 selenium undetected-chromedriver
+RUN pip install boto3 debugpy selenium undetected-chromedriver
 
 # Add application code
 COPY lambda.py /var/task
 COPY utils.py /var/task
 
+# For debugging
+COPY .vscode /var/task/.vscode
+
+# Hack to make Chrome work in Lambda
 COPY wrap_chrome_binary /opt/bin/wrap_chrome_binary
 RUN /opt/bin/wrap_chrome_binary
 
