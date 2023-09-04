@@ -36,7 +36,9 @@
                 "output.pdf",
                 //"--split_size",
                 //"3",
-                //"--proxy"
+                //"--proxy",
+                "--sleep",
+                "30"
             ],
             "console": "integratedTerminal",
             "justMyCode": false

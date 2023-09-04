@@ -1,6 +1,7 @@
 import argparse
 import io
 import logging
+import time
 from typing import List
 
 from PyPDF2 import PdfReader, PdfWriter
@@ -117,20 +118,22 @@ class GoogleTranslatePDF:
 
         return pdf_stream.getvalue()
 
-    def translate(self, proxy: bool = False) -> bytearray:
+    def translate(self, proxy: bool = False, sleep: int = 0) -> bytearray:
         """
         Translate a PDF file.
 
         Args:
             proxy (bool, optional): Whether to use a proxy for translation. Defaults to False.
+            sleep (int, optional): Seconds to sleep between requests. Defaults to 0.
 
         Returns:
             bytearray: The translated PDF.
         """
-        if proxy:
-            pdfs = [translate_pdf_proxy(pdf=pdf) for pdf in self.pdfs]
-        else:
-            pdfs = [translate_pdf(pdf=pdf) for pdf in self.pdfs]
+        pdfs = []
+        _translate_pdf = translate_pdf_proxy if proxy else translate_pdf
+        for pdf in self.pdfs:
+            pdfs.append(_translate_pdf(pdf=pdf))
+            time.sleep(sleep)
         return self.join_pdfs(pdfs=pdfs)
 
 
@@ -145,6 +148,9 @@ if __name__ == "__main__":
     parser.add_argument("--output_pdf", type=str, help="output PDF file")
     parser.add_argument("--proxy", action="store_true", help="use proxy")
     parser.add_argument(
+        "--sleep", type=int, help="seconds to sleep between requests", default=0
+    )
+    parser.add_argument(
         "--split_size",
         type=float,
         help="split PDF into multiple PDFs of this size (in MB)",
@@ -155,7 +161,7 @@ if __name__ == "__main__":
     with open(args.input_pdf, "rb") as file:
         pdf = file.read()
     pdf = GoogleTranslatePDF(pdf=pdf, split_size=args.split_size).translate(
-        proxy=args.proxy
+        proxy=args.proxy, sleep=args.sleep
     )
     with open(args.output_pdf, "wb") as file:
         file.write(pdf)
