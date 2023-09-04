@@ -13,7 +13,7 @@ pip install -r requirements.txt
 Run locally (Google will throttle you after a while):
 
 ```bash
-python google_translate_pdf.py --input_pdf /pth/to/input/pdf --output_pdf /path/to/output/pdf --split_size 3
+python google_translate_pdf.py --input_pdf /pth/to/input/pdf --output_pdf /path/to/output/pdf --split_size 10
 ```
 
 Run in AWS Lambda (currently not working see https://github.com/teticio/google-translate-pdf/issues/1):
