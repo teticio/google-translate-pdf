@@ -131,9 +131,10 @@ class GoogleTranslatePDF:
         """
         pdfs = []
         _translate_pdf = translate_pdf_proxy if proxy else translate_pdf
-        for pdf in self.pdfs:
+        for idx, pdf in enumerate(self.pdfs):
             pdfs.append(_translate_pdf(pdf=pdf))
-            time.sleep(sleep)
+            if idx < len(self.pdfs) - 1:
+                time.sleep(sleep)
         return self.join_pdfs(pdfs=pdfs)
 
 
