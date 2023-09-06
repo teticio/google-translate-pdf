@@ -14,9 +14,13 @@ module "docker_image" {
   source          = "terraform-aws-modules/lambda/aws//modules/docker-build"
   create_ecr_repo = true
   ecr_repo        = "google-translate-pdf"
-  image_tag       = filesha1("${path.module}/utils.py")
-  source_path     = path.module
-  platform        = "linux/amd64"
+  image_tag = sha1(join("", [
+    filesha1("${path.module}/utils.py"),
+    filesha1("${path.module}/lambda.py"),
+    filesha1("${path.module}/Dockerfile")
+  ]))
+  source_path = path.module
+  platform    = "linux/amd64"
 
   ecr_repo_lifecycle_policy = jsonencode({
     "rules" : [
