@@ -34,58 +34,61 @@ def lambda_handler(event, context):  # pylint: disable=unused-argument
     # logging.basicConfig(level=logging.INFO)
     # logger = logging.getLogger(__name__)
 
-    # binary = "/usr/bin/google-chrome"
-    # args = [
-    #     "--disable-gpu",
-    #     "--disable-dev-shm-usage",
-    #     "--hide-scrollbars",
-    #     "--single-process",
-    #     "--ignore-certificate-errors",
-    #     "--homedir=/tmp",
-    #     "--disk-cache-dir=/tmp/cache-dir",
-    #     "--data-path=/tmp/data-path",
-    #     "--remote-debugging-host=127.0.0.1",
-    #     "--remote-debugging-port=43631",
-    #     "--headless",
-    #     "--user-data-dir=/tmp",
-    #     "--lang=en-US",
-    #     "--no-default-browser-check",
-    #     "--no-first-run",
-    #     "--no-sandbox",
-    #     "--test-type",
-    #     "--headless=new",
-    #     "--window-size=1920,1080",
-    #     "--start-maximized",
-    #     "--no-sandbox",
-    #     "--log-level=0",
-    # ]
-
-    # logger.debug("Start browser")
-    # browser = subprocess.Popen(
-    #     [
-    #         binary,
-    #         *args,
-    #     ],
-    #     stdin=subprocess.PIPE,
-    #     stdout=subprocess.PIPE,
-    #     stderr=subprocess.PIPE,
-    #     close_fds=True,
-    # )
-    # logger.debug("Browser PID: " + str(browser.pid))
-
-    # while True:
-    #     try:
-    #         conn = http.client.HTTPConnection(host="127.0.0.1", port=43631)
-    #         conn.request("GET", "/json/version")
-    #         response = conn.getresponse()
-    #         if response.status == 200:
-    #             break
-    #     except Exception as e:
-    #         logger.error(f"GET request failed due to {str(e)}")
-    #         sleep(5)
-    # logger.debug("Browser response: " + response.read().decode("ascii"))
-
     # with tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:
+    #     binary = "/usr/bin/google-chrome"
+    #     args = [
+    #         "--disable-gpu",
+    #         "--disable-dev-shm-usage",
+    #         "--hide-scrollbars",
+    #         "--single-process",
+    #         "--ignore-certificate-errors",
+    #         "--homedir=/tmp",
+    #         "--disk-cache-dir=/tmp/cache-dir",
+    #         "--data-path=/tmp/data-path",
+    #         "--remote-debugging-host=127.0.0.1",
+    #         "--remote-debugging-port=43631",
+    #         "--headless",
+    #         "--user-data-dir=/tmp",
+    #         "--lang=en-US",
+    #         "--no-default-browser-check",
+    #         "--no-first-run",
+    #         "--no-sandbox",
+    #         "--test-type",
+    #         "--headless=new",
+    #         "--window-size=1920,1080",
+    #         "--start-maximized",
+    #         "--no-sandbox",
+    #         "--log-level=10",
+    #         "--log-file=/tmp/chrome.log",
+    #         "--enable-logging",
+    #         "--v=1",
+    #     ]
+
+    #     logger.debug("Start browser")
+    #     browser = subprocess.Popen(
+    #         [
+    #             binary,
+    #             *args,
+    #         ],
+    #         stdin=subprocess.PIPE,
+    #         stdout=stdout,
+    #         stderr=stderr,
+    #         close_fds=True,
+    #     )
+    #     logger.debug("Browser PID: " + str(browser.pid))
+
+    #     while True:
+    #         try:
+    #             conn = http.client.HTTPConnection(host="127.0.0.1", port=43631)
+    #             conn.request("GET", "/json/version")
+    #             response = conn.getresponse()
+    #             if response.status == 200:
+    #                 break
+    #         except Exception as e:
+    #             logger.error(f"GET request failed due to {str(e)}")
+    #             sleep(5)
+    #     logger.debug("Browser response: " + response.read().decode("ascii"))
+
     #     logger.debug("Start chromedriver")
     #     process = subprocess.Popen(
     #         [
@@ -138,9 +141,11 @@ def lambda_handler(event, context):  # pylint: disable=unused-argument
     #         logger.error(f"POST request failed due to {str(e)}")
 
     #     stderr.seek(0)
-    #     logger.error("Chromedriver STDERR: " + str(stderr.read().decode("utf-8")))
+    #     logger.error("STDERR: " + str(stderr.read().decode("utf-8")))
     #     stdout.seek(0)
-    #     logger.error("Chromedriver STDOUT: " + str(stdout.read().decode("utf-8")))
+    #     logger.error("STDOUT: " + str(stdout.read().decode("utf-8")))
+    #     with open("/tmp/chrome.log", "r") as file:
+    #         logger.debug("Chrome log: " + str(file.read()))
 
     # return {"translated_pdf": base64.b64encode(b"").decode("utf-8")}
 

@@ -20,6 +20,12 @@ RUN yum update -y && \
 #     ln -s /usr/local/bin/chrome-linux64/chrome /usr/bin/google-chrome && \
 #     rm chrome-linux64.zip 
 
+# # Install Chromium
+# RUN yum install -y amazon-linux-extras curl gcc jq tar unzip wget && \
+#     PYTHON=python2 amazon-linux-extras install -y epel && \
+#     yum install -y chromium && \
+#     mv /usr/bin/chromium-browser /usr/bin/google-chrome
+
 # Install chromedriver (note that undetected-chromedriver downloads its own version of chromedriver)
 RUN LATEST_CHROME_RELEASE=$(curl -s https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json | jq '.channels.Stable') && \
     LATEST_CHROMEDRIVER_URL=$(echo "$LATEST_CHROME_RELEASE" | jq -r '.downloads.chromedriver[] | select(.platform == "linux64") | .url') && \
