@@ -34,9 +34,9 @@
                 "input.pdf",
                 "--output_pdf",
                 "output.pdf",
-                //"--split_size",
-                //"3",
-                //"--proxy",
+                "--split_size",
+                "3",
+                "--proxy",
                 "--sleep",
                 "30"
             ],
